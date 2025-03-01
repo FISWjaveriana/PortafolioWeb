@@ -72,7 +72,15 @@ jobs:
           npm init -y
           npm install next@latest react@latest react-dom@latest
       - name: Build with Next.js
-        run: npm run build
+        working-directory: ./
+        run: |
+            # Add build script to package.json
+            npm pkg set scripts.build="next build"
+            npm pkg set scripts.start="next start"
+            npm pkg set scripts.dev="next dev"
+            
+            # Build the application
+            npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
