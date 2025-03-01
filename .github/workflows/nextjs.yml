@@ -74,13 +74,18 @@ jobs:
       - name: Build with Next.js
         working-directory: ./
         run: |
-            # Add build script to package.json
-            npm pkg set scripts.build="next build"
-            npm pkg set scripts.start="next start"
-            npm pkg set scripts.dev="next dev"
-            
-            # Build the application
-            npm run build
+          # Create necessary directories and files
+          mkdir -p app
+          echo 'export default function Home() { return <h1>Welcome to my portfolio!</h1> }' > app/page.tsx
+          echo 'export default function RootLayout({ children }) { return <html lang="en"><body>{children}</body></html> }' > app/layout.tsx
+          
+          # Add build script to package.json
+          npm pkg set scripts.build="next build"
+          npm pkg set scripts.start="next start"
+          npm pkg set scripts.dev="next dev"
+          
+          # Build the application
+          npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
