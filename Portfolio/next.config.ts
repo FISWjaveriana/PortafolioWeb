@@ -9,7 +9,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
-  // This tells Next.js to look for pages/app in the src directory
+  // Configure Next.js to use the src directory
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
 };
 
