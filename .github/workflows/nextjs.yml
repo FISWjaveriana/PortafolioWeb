@@ -65,12 +65,17 @@ jobs:
             restore-keys: |
               ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies
-        working-directory: ./  # Explicitly set working directory
+        working-directory: ./
         run: |
           pwd
           ls -la
           npm init -y
+          # Install Next.js and React
           npm install next@latest react@latest react-dom@latest
+          # Install TypeScript and type definitions
+          npm install --save-dev typescript @types/react @types/node @types/react-dom
+          # Initialize TypeScript configuration
+          npx tsc --init
       - name: Build with Next.js
         working-directory: ./
         run: |
