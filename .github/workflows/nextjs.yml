@@ -79,11 +79,6 @@ jobs:
       - name: Build with Next.js
         working-directory: ./
         run: |
-            # Create necessary directories and files
-            mkdir -p app
-            echo 'export default function Home() { return <h1>Welcome to my portfolio!</h1> }' > app/page.tsx
-            echo 'export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html> }' > app/layout.tsx
-            
             # Add build script to package.json
             npm pkg set scripts.build="next build"
             npm pkg set scripts.start="next start"
