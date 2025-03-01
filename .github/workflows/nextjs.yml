@@ -79,9 +79,20 @@ jobs:
       - name: Build with Next.js
         working-directory: ./
         run: |
-            # Create next.config.js to specify the src directory
-            echo 'module.exports = { output: "export", images: { unoptimized: true } }' > next.config.js
-          
+            # Make sure next.config.js exists and is configured properly
+            if [ ! -f "next.config.js" ]; then
+              echo "Creating next.config.js to use src directory"
+              echo "/** @type {import('next').NextConfig} */
+              const nextConfig = {
+                reactStrictMode: true,
+                swcMinify: true,
+                // Configure Next.js to use the src directory
+                pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+              }
+              
+              module.exports = nextConfig" > next.config.js
+            fi
+            
             # Add build script to package.json
             npm pkg set scripts.build="next build"
             npm pkg set scripts.start="next start"
