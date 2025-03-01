@@ -47,7 +47,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache: npm
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
@@ -65,7 +65,12 @@ jobs:
             restore-keys: |
               ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies
-        run: npm install
+        working-directory: ./  # Explicitly set working directory
+        run: |
+          pwd
+          ls -la
+          npm init -y
+          npm install next@latest react@latest react-dom@latest
       - name: Build with Next.js
         run: npm run build
       - name: Upload artifact
