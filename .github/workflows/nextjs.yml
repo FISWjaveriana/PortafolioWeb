@@ -79,6 +79,9 @@ jobs:
       - name: Build with Next.js
         working-directory: ./
         run: |
+            # Create next.config.js to specify the src directory
+            echo 'module.exports = { output: "export", images: { unoptimized: true } }' > next.config.js
+          
             # Add build script to package.json
             npm pkg set scripts.build="next build"
             npm pkg set scripts.start="next start"
