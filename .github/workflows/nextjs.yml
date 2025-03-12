@@ -34,21 +34,14 @@ jobs:
       - name: Detect package manager
         id: detect-package-manager
         run: |
-          if [ -f "${{ github.workspace }}/Portfolio/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/Portfolio/package-lock.json" ]; then
+          if [ -f "${{ github.workspace }}/package-lock.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
           else
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
+            echo "Unable to determine package manager"
+            exit 1
           fi
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -58,17 +51,21 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
+          # Automatically inject basePath in your Next.js configuration file and disable
+          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
+          #
+          # You may remove this line if you want to manage the configuration yourself.
           static_site_generator: next
       - name: Restore cache
         uses: actions/cache@v4
         with:
             path: |
-              Portfolio/.next/cache
+              .next/cache
             key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
             restore-keys: |
               ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies
-        working-directory: ./Portfolio
+        working-directory: ./
         run: |
           pwd
           ls -la
@@ -77,13 +74,10 @@ jobs:
           npm install next@latest react@latest react-dom@latest
           # Install TypeScript and type definitions
           npm install --save-dev typescript @types/react @types/node @types/react-dom
-          # Install Tailwind CSS
-          npm install --save-dev tailwindcss postcss autoprefixer
-          npx tailwindcss init -p
           # Initialize TypeScript configuration
           npx tsc --init
       - name: Build with Next.js
-        working-directory: ./Portfolio
+        working-directory: ./
         run: |
             # Make sure next.config.js exists and is configured properly
             if [ ! -f "next.config.js" ]; then
@@ -92,10 +86,6 @@ jobs:
               const nextConfig = {
                 reactStrictMode: true,
                 swcMinify: true,
-                output: 'export',
-                images: {
-                  unoptimized: true,
-                },
                 // Configure Next.js to use the src directory
                 pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
               }
@@ -108,28 +98,12 @@ jobs:
             npm pkg set scripts.start="next start"
             npm pkg set scripts.dev="next dev"
             
-            # Create tailwind.config.js if it doesn't exist
-            if [ ! -f "tailwind.config.js" ]; then
-              echo "/** @type {import('tailwindcss').Config} */
-              module.exports = {
-                content: [
-                  './app/**/*.{js,ts,jsx,tsx,mdx}',
-                  './pages/**/*.{js,ts,jsx,tsx,mdx}',
-                  './components/**/*.{js,ts,jsx,tsx,mdx}',
-                ],
-                theme: {
-                  extend: {},
-                },
-                plugins: [],
-              }" > tailwind.config.js
-            fi
-            
             # Build the application
             npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./Portfolio/out
+          path: ./out
 
   # Deployment job
   deploy:
